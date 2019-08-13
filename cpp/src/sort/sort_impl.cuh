@@ -223,6 +223,9 @@ namespace cusort {
       //  the number of leading zeros in the maximum value).
       //
 
+      int64_t arrayPos[num_gpus+1]={0};
+      unsigned char* uvmPtr=nullptr;
+
       //
       //  Use binSplitters (not needed until later) to compute the max
       //
@@ -382,7 +385,43 @@ namespace cusort {
         cub::DeviceRadixSort::SortKeys<Key_t>(nullptr, tData[cpu_tid].cubSortBufferSize,
                                               nullptr, nullptr, elements);
 
-        tData[cpu_tid].bdReorder.allocate_keys_only(h_writePositionsTransposed[cpu_tid][num_gpus], tData[cpu_tid].cubSortBufferSize);
+        if(0){
+          tData[cpu_tid].bdReorder.allocate_keys_only(h_writePositionsTransposed[cpu_tid][num_gpus], tData[cpu_tid].cubSortBufferSize);
+        }else{
+
+          Length_t cubDataSize = ((tData[cpu_tid].cubSortBufferSize + MEM_ALIGN - 1) / MEM_ALIGN) * MEM_ALIGN;
+          Length_t sdSize = ((elements + MEM_ALIGN - 1) / MEM_ALIGN) * MEM_ALIGN;
+          Length_t startingPoint = sdSize * sizeof(Key_t);         
+          arrayPos[cpu_tid+1]=cubDataSize + startingPoint;
+          
+          #pragma omp barrier
+
+          #pragma omp master
+                {
+                  int64_t prefixArray[num_gpus+1];
+                  prefixArray[0]=0;
+                  arrayPos[0]=0;
+                  for(int g=0; g<num_gpus;g++){
+                    prefixArray[g+1]=prefixArray[g]+arrayPos[cpu_tid];
+                  }
+                  for(int g=0; g<(num_gpus+1);g++){
+                    arrayPos[g+1]=prefixArray[g];
+                  }
+
+                }
+                cudaMallocManaged(&uvmPtr, arrayPos[num_gpus]);
+
+          // ALLOC_TRY(&buffer, cubDataSize + startingPoint, nullptr);
+          unsigned char* buffer = uvmPtr + arrayPos[cpu_tid];
+          tData[cpu_tid].bdReorder.d_keys = (Key_t *) buffer;
+          tData[cpu_tid].bdReorder.cubBuffer = buffer + startingPoint;
+          tData[cpu_tid].bdReorder.h_length = elements;
+
+        }
+
+ 
+        return GDF_SUCCESS;
+
       } else {
         cub::DeviceRadixSort::SortPairs<Key_t,Value_t>(nullptr, tData[cpu_tid].cubSortBufferSize,
                                                        nullptr, nullptr, nullptr, nullptr, elements);
