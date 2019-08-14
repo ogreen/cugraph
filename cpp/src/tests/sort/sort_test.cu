@@ -586,10 +586,22 @@ TEST_F(SortTest, Random10MKeysPerDevice_uint64_t)
   //
   cusort::initialize_snmg_communication(n_gpus);
 
-  // NOTE:  could vary numBins, binScale, useThrust
+cudaEvent_t start, stop;
+cudaEventCreate(&start);
+cudaEventCreate(&stop);
+cudaEventRecord(start);
+
   cusort::sort_key(d_input, h_input_offsets,
                    d_output, h_output_offsets,
                    n_gpus);
+
+cudaEventRecord(stop);
+cudaEventSynchronize(stop);
+float milliseconds = 0;
+cudaEventElapsedTime(&milliseconds, start, stop);
+printf("Actual sort time %f\n",milliseconds);
+
+
 
   verify_sorted_order(d_output, h_output_offsets, n_gpus, stream, true);
 
@@ -629,10 +641,20 @@ TEST_F(SortTest, Random10MKeysPerDevice_uint32_t)
   //
   cusort::initialize_snmg_communication(n_gpus);
 
-  // NOTE:  could vary numBins, binScale, useThrust
+cudaEvent_t start, stop;
+cudaEventCreate(&start);
+cudaEventCreate(&stop);
+cudaEventRecord(start);
+
   cusort::sort_key(d_input, h_input_offsets,
                    d_output, h_output_offsets,
                    n_gpus);
+
+cudaEventRecord(stop);
+cudaEventSynchronize(stop);
+float milliseconds = 0;
+cudaEventElapsedTime(&milliseconds, start, stop);
+printf("Actual sort time %f\n",milliseconds);
 
   verify_sorted_order(d_output, h_output_offsets, n_gpus, stream, true);
 
@@ -672,10 +694,21 @@ TEST_F(SortTest, Random100MKeysPerDevice_uint64_t)
   //
   cusort::initialize_snmg_communication(n_gpus);
 
-  // NOTE:  could vary numBins, binScale, useThrust
+cudaEvent_t start, stop;
+cudaEventCreate(&start);
+cudaEventCreate(&stop);
+cudaEventRecord(start);
+
   cusort::sort_key(d_input, h_input_offsets,
                    d_output, h_output_offsets,
                    n_gpus);
+
+cudaEventRecord(stop);
+cudaEventSynchronize(stop);
+float milliseconds = 0;
+cudaEventElapsedTime(&milliseconds, start, stop);
+printf("Actual sort time %f\n",milliseconds);
+
 
   verify_sorted_order(d_output, h_output_offsets, n_gpus, stream, true);
 
@@ -715,10 +748,20 @@ TEST_F(SortTest, Random100MKeysPerDevice_uint32_t)
   //
   cusort::initialize_snmg_communication(n_gpus);
 
-  // NOTE:  could vary numBins, binScale, useThrust
+cudaEvent_t start, stop;
+cudaEventCreate(&start);
+cudaEventCreate(&stop);
+cudaEventRecord(start);
+
   cusort::sort_key(d_input, h_input_offsets,
                    d_output, h_output_offsets,
                    n_gpus);
+
+cudaEventRecord(stop);
+cudaEventSynchronize(stop);
+float milliseconds = 0;
+cudaEventElapsedTime(&milliseconds, start, stop);
+printf("Actual sort time %f\n",milliseconds);
 
   verify_sorted_order(d_output, h_output_offsets, n_gpus, stream, true);
 
@@ -758,10 +801,20 @@ TEST_F(SortTest, Random256MKeysPerDevice_uint64_t)
   //
   cusort::initialize_snmg_communication(n_gpus);
 
-  // NOTE:  could vary numBins, binScale, useThrust
+cudaEvent_t start, stop;
+cudaEventCreate(&start);
+cudaEventCreate(&stop);
+cudaEventRecord(start);
+
   cusort::sort_key(d_input, h_input_offsets,
                    d_output, h_output_offsets,
                    n_gpus);
+
+cudaEventRecord(stop);
+cudaEventSynchronize(stop);
+float milliseconds = 0;
+cudaEventElapsedTime(&milliseconds, start, stop);
+printf("Actual sort time %f\n",milliseconds);
 
   verify_sorted_order(d_output, h_output_offsets, n_gpus, stream, true);
 
@@ -801,10 +854,21 @@ TEST_F(SortTest, Random256MKeysPerDevice_uint32_t)
   //
   cusort::initialize_snmg_communication(n_gpus);
 
-  // NOTE:  could vary numBins, binScale, useThrust
+cudaEvent_t start, stop;
+cudaEventCreate(&start);
+cudaEventCreate(&stop);
+cudaEventRecord(start);
+
   cusort::sort_key(d_input, h_input_offsets,
                    d_output, h_output_offsets,
                    n_gpus);
+
+cudaEventRecord(stop);
+cudaEventSynchronize(stop);
+float milliseconds = 0;
+cudaEventElapsedTime(&milliseconds, start, stop);
+printf("Actual sort time %f\n",milliseconds);
+
 
   verify_sorted_order(d_output, h_output_offsets, n_gpus, stream, true);
 
