@@ -407,9 +407,11 @@ namespace cusort {
                   for(int g=0; g<(num_gpus+1);g++){
                     arrayPos[g+1]=prefixArray[g];
                   }
+                  cudaMallocManaged(&uvmPtr, arrayPos[num_gpus]);
 
                 }
-                cudaMallocManaged(&uvmPtr, arrayPos[num_gpus]);
+
+                cudaMemPrefetchAsync(uvmPtr + arrayPos[cpu_tid],arrayPos[cpu_tid+1]-arrayPos[cpu_tid],cpu_tid);
 
           // ALLOC_TRY(&buffer, cubDataSize + startingPoint, nullptr);
           unsigned char* buffer = uvmPtr + arrayPos[cpu_tid];
